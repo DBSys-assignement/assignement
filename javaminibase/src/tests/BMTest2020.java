@@ -109,7 +109,7 @@ class BMDriver extends TestDriver implements GlobalConst {
     boolean _passAll = OK;
 
     //The following runs all the test functions
-
+    System.out.print("????????????????????????");
     //Running test1() to test6()
     if (!test1()) { _passAll = FAIL; }
     if (!test2()) { _passAll = FAIL; }
