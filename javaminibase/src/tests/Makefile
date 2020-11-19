@@ -1,6 +1,6 @@
 # modify the paths appropriately
-JDKPATH = /usr/java/jdk1.3.1_02
-LIBPATH = .:..
+JDKPATH = /usr/lib/jvm/java-11-openjdk-amd64
+LIBPATH = ./..
 CLASSPATH = $(LIBPATH)
 BINPATH = $(JDKPATH)/bin
 JAVAC = $(JDKPATH)/bin/javac -classpath $(CLASSPATH)
@@ -14,6 +14,12 @@ BMTest:BMTest.java
 bmtest: BMTest
 	$(JAVA) tests.BMTest
 
+BMTest2020:BMTest2020.java
+	$(JAVAC) TestDriver.java BMTest2020.java
+
+bmtest2020: BMTest2020
+	$(JAVA) tests.BMTest
+
 # test disk manager
 
 DBTest:DBTest.java
@@ -22,7 +28,7 @@ DBTest:DBTest.java
 dbtest: DBTest
 	$(JAVA) tests.DBTest
 
-# test heapfile 
+# test heapfile
 
 HFTest:HFTest.java
 	$(JAVAC) TestDriver.java HFTest.java
@@ -69,7 +75,3 @@ SMJoin:SM_JoinTest.java
 
 sortmerge: SMJoin
 	$(JAVA) tests.SM_JoinTest
-
-
-
-

@@ -27,8 +27,9 @@ PACKAGEINDEX=$(ASSIGN)/javadoc
 
 JAVADOC=javadoc -public -d $(PACKAGEINDEX)
 
+git_modify = bufmgr/FIFO.java bufmgr/LIFO.java bufmgr/LRUK.java bufmgr/BufMgr.java tests/BMTest2020.java
 ### Generate jar and javadoc files.  Apply to most assignments.
-db: 
+db:
 	make -C global
 	make -C chainexception
 	make -C btree
@@ -37,13 +38,14 @@ db:
 	make -C heap
 	make -C index
 	make -C iterator
-	
+
 doc:
 	$(JAVADOC) $(DOCFILES)
 
-test: 
+test:
 	cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge
 
 clean:
 	\rm -f $(CLASSPATH)/*.class *~ \#* core $(JARFILES) TRACE
-
+git_a:
+	git add $(git_modify)
