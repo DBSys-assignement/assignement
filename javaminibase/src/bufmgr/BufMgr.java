@@ -450,7 +450,7 @@ public class BufMgr implements GlobalConst{
             System.out.println("Replacer: LIFO\n");
         }
         else if(replacerArg.compareTo("LRUK") == 0){
-            replacer = new LRUK(this);
+            replacer = new LRUK(this, 2);
             System.out.println("Replacer: LRUK\n");
         }
         else
@@ -510,6 +510,10 @@ public class BufMgr implements GlobalConst{
       int     needwrite = 0;
 
       frameNo = hashTable.lookup(pin_pgid);
+      
+      if (replacer.name()=="LRUK") {
+    	  ((LRUK)replacer).PageId = pin_pgid.pid;
+      }
 
       if (frameNo < 0) {           // Not in the buffer pool
 
@@ -580,9 +584,15 @@ public class BufMgr implements GlobalConst{
         // return true;
 
       } else {    // the page is in the buffer pool ( frameNo > 0 )
+    	  if (replacer.name()=="LRUK") {
+        	  ((LRUK)replacer).inBuffer = true;
+          }
 
 	page.setpage(bufPool[frameNo]);
 	replacer.pin(frameNo);
+			if (replacer.name()=="LRUK") {
+		  	  ((LRUK)replacer).inBuffer = false;
+		    }
 
       }
     }
@@ -872,6 +882,12 @@ public class BufMgr implements GlobalConst{
     }
 
   } // end of deallocate_page
+
+
+public Replacer getReplacer() {
+	// TODO Auto-generated method stub
+	return replacer;
+}
 
 }
 
