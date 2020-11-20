@@ -510,7 +510,7 @@ public class BufMgr implements GlobalConst{
       int     needwrite = 0;
 
       frameNo = hashTable.lookup(pin_pgid);
-      
+
       if (replacer.name()=="LRUK") {
     	  ((LRUK)replacer).PageId = pin_pgid.pid;
       }

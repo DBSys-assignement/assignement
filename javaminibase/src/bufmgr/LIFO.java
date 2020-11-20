@@ -25,7 +25,7 @@ class LIFO extends Replacer{
         }
         //Move frames[i - 1] to frames[i] to empty the first frame.
         for(int i = index; i > 0; --i){
-          frames[i] = frames[i - 1];
+            frames[i] = frames[i - 1];
         }
         //Then move the frame to the beginning.
         frames[0] = frameNo;
@@ -95,6 +95,7 @@ class LIFO extends Replacer{
             frames[frame] = frame;
             state_bit[frame].state = Pinned;
             (mgr.frameTable())[frame].pin();
+            update(frame);
             return frame;
         }
         //It's similar to FIFO, pick the first frame isn't pinned.

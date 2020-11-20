@@ -19,21 +19,21 @@ public class LRUK extends Replacer{
     private HashMap<Integer, Long[]> HIST;
     private HashMap<Integer, Long> Last;
     private long Correlated_Reference_Period = 0;
-    
-    // For the Correlated period 
+
+    // For the Correlated period
     int ReferencePeriod = 0;
     public void ReferencePeriodSet(int Period){
     	ReferencePeriod = Period;
     }
-    
+
     /**
     * This pushes the given frame to the end of the list.
     * @param frameNo	the frame number
     */
-    
+
     Boolean inBuffer = false;
     Long histoies[];
-    
+
     private void update(int frameIndex)
     {
     	//for the case that the page isn't inside the buffer
@@ -43,7 +43,7 @@ public class LRUK extends Replacer{
     			for (int i = 1; i<K; i++) {
     				histoies[i] = histoies[i-1];
     			}
-    			
+
     		}else {
     			histoies = new Long[K];
     			Arrays.fill(histoies, 0L);
@@ -53,6 +53,7 @@ public class LRUK extends Replacer{
 			Last.put(PageId, histoies[0]);
     	}else {
     		//for the case that page is inside the buffer
+
     		PageId = frames[frameIndex];
     		long LastTime = Last.get(PageId);
     		if ((System.currentTimeMillis() - LastTime) >= Correlated_Reference_Period) {
@@ -67,10 +68,10 @@ public class LRUK extends Replacer{
     		}else {
     			Last.put(PageId, System.currentTimeMillis());
     		}
-    		
+
     	}
     }
-    	
+
 
     //copy from LRU.java!!
     /**
@@ -131,34 +132,38 @@ public class LRUK extends Replacer{
     public int pick_victim()
    		 throws BufferPoolExceededException
     {
-      int numBuffers = mgr.getNumBuffers();
-      int frameIndex;
+        int numBuffers = mgr.getNumBuffers();
+        int frameIndex = -1;
 
-       if ( nframes < numBuffers ) {
+        if ( nframes < numBuffers ) {
          // buffer is not full
-           frameIndex = nframes++;
-           frames[frameIndex] = PageId;
-           state_bit[frameIndex].state = Pinned;
-           (mgr.frameTable())[frameIndex].pin();
-           //generate or update history for the page
-           update(0);
-           return frameIndex;
-       }
-       
+            frameIndex = nframes++;
+            frames[frameIndex] = PageId;
+            state_bit[frameIndex].state = Pinned;
+            (mgr.frameTable())[frameIndex].pin();
+            //generate or update history for the page
+            update(0);
+            return frameIndex;
+        }
+
        // buffer is full
        int victim;
        int Index;
        long timeMin = System.currentTimeMillis();
        for ( int i = 0; i < numBuffers; ++i ) {
     	   Index = frames[i];
-    	   frameIndex = i;
+           //debug by Yao----------------------
+    	   //frameIndex = i;
            if ( state_bit[i].state != Pinned ) {
-               
+
         	   // Find the shortest K refenrece
-        	   if((System.currentTimeMillis() -Last.get(Index))>= Correlated_Reference_Period && HIST.get(Index)[(K-1)] <= timeMin){
+        	   if((System.currentTimeMillis() - Last.get(Index))>= Correlated_Reference_Period && HIST.get(Index)[(K-1)] <= timeMin){
         		   victim = Index;
-        		   Index = i;
-        		   timeMin =  HIST.get(Index)[(K-1)];
+                   //debug by Yao----------------------
+                   //Index = i;
+                   frameIndex = i;
+                   //----------------------------------
+                   timeMin =  HIST.get(Index)[(K-1)];
         	   }
 
            }

@@ -17,11 +17,11 @@ class LRU extends  Replacer {
    */
 
     private int  frames[];
- 
+
   /**
    * private field
    * number of frames used
-   */   
+   */
   private int  nframes;
 
   /**
@@ -37,7 +37,7 @@ class LRU extends  Replacer {
 
     while ( ++index < nframes )
         frames[index-1] = frames[index];
-        frames[nframes-1] = frameNo;
+    frames[nframes-1] = frameNo;
   }
 
   /**
@@ -68,11 +68,11 @@ class LRU extends  Replacer {
       super(mgrArg);
       frames = null;
     }
-  
+
   /**
    * calll super class the same method
-   * pin the page in the given frame number 
-   * move the page to the end of list  
+   * pin the page in the given frame number
+   * move the page to the end of list
    *
    * @param	 frameNo	 the frame number to pin
    * @exception  InvalidFrameNumberException
@@ -82,7 +82,7 @@ class LRU extends  Replacer {
     super.pin(frameNo);
 
     update(frameNo);
-    
+
  }
 
   /**
@@ -97,7 +97,7 @@ class LRU extends  Replacer {
  {
    int numBuffers = mgr.getNumBuffers();
    int frame;
-   
+
     if ( nframes < numBuffers ) {
         frame = nframes++;
         frames[frame] = frame;
@@ -118,33 +118,30 @@ class LRU extends  Replacer {
 
     return -1;
  }
- 
+
   /**
    * get the page replacement policy name
    *
    * @return	return the name of replacement policy used
-   */  
+   */
     public String name() { return "LRU"; }
- 
+
   /**
    * print out the information of frame usage
-   */  
+   */
  public void info()
  {
     super.info();
 
     System.out.print( "LRU REPLACEMENT");
-    
+
     for (int i = 0; i < nframes; i++) {
         if (i % 5 == 0)
 	System.out.println( );
 	System.out.print( "\t" + frames[i]);
-        
+
     }
     System.out.println();
  }
-  
+
 }
-
-
-

@@ -24,7 +24,7 @@ class FIFO extends Replacer{
 
         while ( ++index < nframes )
            frames[index-1] = frames[index];
-           frames[nframes-1] = frameNo;
+        frames[nframes-1] = frameNo;
     }
 
     //copy from LRU.java!!

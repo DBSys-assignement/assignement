@@ -18,7 +18,7 @@ BMTest2020:BMTest2020.java
 	$(JAVAC) TestDriver.java BMTest2020.java
 
 bmtest2020: BMTest2020
-	$(JAVA) tests.BMTest
+	$(JAVA) tests.BMTest2020
 
 # test disk manager
 
