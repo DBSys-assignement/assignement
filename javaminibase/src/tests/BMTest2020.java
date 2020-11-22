@@ -684,16 +684,19 @@ protected boolean test4 () {
       e.printStackTrace();
     }
   }
+  
     int frames[]=replacer.getFrames();
+    
+    
     if ( status == OK )
     {
         System.out.print ("Read the pages\n");
-  int pagenumber=-1;
+        int pagenumber=-1;
         for ( int index=1; status == OK && index < numPages; index++ ) {
         try
         {
           pagenumber=frames[index-1];
-          if(replacer.last(pagenumber)>=0)
+          if(replacer.last(pagenumber)>0)
           {
             SystemDefs.JavabaseBM.unpinPage( new PageId(pagenumber), true );
           }
@@ -705,6 +708,7 @@ protected boolean test4 () {
             e.printStackTrace();
         }
         }
+        
       if (status == OK)
       {
         try

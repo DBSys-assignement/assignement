@@ -7,6 +7,8 @@ import java.util.*;
 //Except the pick_victim() function, other parts are similar to other replacers.
 //Therefore, I reuse it from LRU.java.
 public class LRUK extends Replacer{
+	
+	
 
 	// As normal LRU
     private int  frames[];
@@ -35,6 +37,7 @@ public class LRUK extends Replacer{
 
     private void update(int frameIndex)
     {
+    	
     	//for the case that the page isn't inside the buffer
     	if (inBuffer == false) {
     		if(HIST.containsKey(PageId)){
@@ -129,31 +132,53 @@ public class LRUK extends Replacer{
     *		return -1 if failed
     */
     public int pick_victim()
-   		 throws BufferPoolExceededException
+   		 throws BufferPoolExceededException, PagePinnedException 
     {
         int numBuffers = mgr.getNumBuffers();
         int frameIndex = -1;
+        int victim = -1;
 
         if ( nframes < numBuffers ) {
          // buffer is not full
             frameIndex = nframes++;
             frames[frameIndex] = PageId;
             state_bit[frameIndex].state = Pinned;
+            if ( state_bit[frameIndex].state != Pinned ) {
+            	System.out.print("YES");
+            }
+//            System.out.println(state_bit[frameIndex].state);
             (mgr.frameTable())[frameIndex].pin();
-            update(0);
+            update(frameIndex);
             return frameIndex;
         }
 
        // buffer is full
-       int victim;
+
        int Index;
        long timeMin = System.currentTimeMillis();
+//       System.out.println(numBuffers);
+//       for ( int j = 0; j < numBuffers; ++j ) {
+//		   System.out.println(state_bit[j].state);
+//		   if (state_bit[j].state != Pinned ) {
+//			   System.out.println("YE");
+//		   }else {
+//			   System.out.println("No");
+//			   
+//		   }
+//		   System.out.println(state_bit[j].state);
+//	   }
+       
        for ( int i = 0; i < numBuffers; ++i ) {
     	   Index = frames[i];
+//    	   System.out.println(Index);
+//    	   System.out.println(i);
+    	   
            if ( state_bit[i].state != Pinned ) {
-
-        	   // Find the shortest K refernece 
-        	   if((System.currentTimeMillis() - Last.get(Index))>= Correlated_Reference_Period && HIST.get(Index)[(K-1)] <= timeMin){
+//        	   System.out.println(i);
+//        	   System.out.println('\n');
+        	   // Find the shortest K reference 
+        	   if((System.currentTimeMillis() - Last.get(Index))>= Correlated_Reference_Period 
+        			   && HIST.get(Index)[(K-1)] <= timeMin){
         		   victim = Index;
                    frameIndex = i;
                    timeMin =  HIST.get(Index)[(K-1)];
@@ -163,10 +188,11 @@ public class LRUK extends Replacer{
            if (frameIndex>=0){
            state_bit[frameIndex].state = Pinned;
            (mgr.frameTable())[frameIndex].pin();
-           update(0);
+           update(frameIndex);
            return frameIndex;
          }
        }
+      
 
    	  throw new BufferPoolExceededException (null, "BUFMGR: BUFFER_EXCEEDED.");
     }
@@ -204,12 +230,18 @@ public class LRUK extends Replacer{
 
 	public Long last(int pagenumber) {
 		// TODO Auto-generated method stub
-		return Last.get(pagenumber);
+		if (state_bit[pagenumber] .state != Pinned) {
+			return Last.get(pagenumber);
+		}
+		return (long) -1;
 	}
 
 
 	public long HIST(int pagenumber, int i) {
 		// TODO Auto-generated method stub
-		return HIST.get(pagenumber)[i];
+		if (HIST.containsKey(pagenumber)) {
+			return HIST.get(pagenumber)[i];
+		}
+		return -1;
 	}
 }
