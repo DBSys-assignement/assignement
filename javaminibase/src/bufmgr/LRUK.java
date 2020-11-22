@@ -140,7 +140,6 @@ public class LRUK extends Replacer{
             frames[frameIndex] = PageId;
             state_bit[frameIndex].state = Pinned;
             (mgr.frameTable())[frameIndex].pin();
-            //generate or update history for the page
             update(0);
             return frameIndex;
         }
@@ -151,17 +150,12 @@ public class LRUK extends Replacer{
        long timeMin = System.currentTimeMillis();
        for ( int i = 0; i < numBuffers; ++i ) {
     	   Index = frames[i];
-           //debug by Yao----------------------
-    	   //frameIndex = i;
            if ( state_bit[i].state != Pinned ) {
 
-        	   // Find the shortest K refenrece
+        	   // Find the shortest K refernece 
         	   if((System.currentTimeMillis() - Last.get(Index))>= Correlated_Reference_Period && HIST.get(Index)[(K-1)] <= timeMin){
         		   victim = Index;
-                   //debug by Yao----------------------
-                   //Index = i;
                    frameIndex = i;
-                   //----------------------------------
                    timeMin =  HIST.get(Index)[(K-1)];
         	   }
 
@@ -169,7 +163,6 @@ public class LRUK extends Replacer{
            if (frameIndex>=0){
            state_bit[frameIndex].state = Pinned;
            (mgr.frameTable())[frameIndex].pin();
-           //generate or update history for the page
            update(0);
            return frameIndex;
          }

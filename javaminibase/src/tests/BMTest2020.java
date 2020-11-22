@@ -675,9 +675,8 @@ protected boolean test4 () {
       status == OK && pid.pid < lastPid.pid ;
       pid.pid = pid.pid + 1 ) {
     try {
-       if ( pid.pid % 20 != 12 ) {
         SystemDefs.JavabaseBM.pinPage( pid, pg, /*emptyPage:*/ true);
-       }
+       
     }
     catch (Exception e) {
       status = FAIL;
