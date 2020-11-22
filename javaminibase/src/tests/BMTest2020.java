@@ -660,91 +660,95 @@ SystemDefs sysdef = new SystemDefs( dbpath, NUMBUF+20, NUMBUF, replacealgo[i]);
    * @return whether test4 has passed
    */
 
+protected boolean test4 () {
+    System.out.print("\n  NEW Test 4 \n");
+    int numPages = SystemDefs.JavabaseBM.getNumUnpinnedBuffers() + 1;
+    Page pg = new Page ();
+    PageId pid, lastPid;
+    PageId firstPid = new PageId();
+    boolean status = OK;
+    SystemDefs sysdef = new SystemDefs( dbpath, NUMBUF+20, NUMBUF, "LRUK");
+    LRUK replacer=(LRUK)(SystemDefs.JavabaseBM.getReplacer());
+  pid = new PageId();
+  lastPid = new PageId();
+  for ( pid.pid = firstPid.pid, lastPid.pid = pid.pid+numPages-1;
+      status == OK && pid.pid < lastPid.pid ;
+      pid.pid = pid.pid + 1 ) {
+    try {
+       if ( pid.pid % 20 != 12 ) {
+        SystemDefs.JavabaseBM.pinPage( pid, pg, /*emptyPage:*/ true);
+       }
+    }
+    catch (Exception e) {
+      status = FAIL;
+      System.err.print("*** Could not pin new page "+pid.pid+"\n");
+      e.printStackTrace();
+    }
+  }
+    int frames[]=replacer.getFrames();
+    if ( status == OK )
+    {
+        System.out.print ("Read the pages\n");
+  int pagenumber=-1;
+        for ( int index=1; status == OK && index < numPages; index++ ) {
+        try
+        {
+          pagenumber=frames[index-1];
+          if(replacer.last(pagenumber)>0)
+          {
+            SystemDefs.JavabaseBM.unpinPage( new PageId(pagenumber), true );
+          }
+        }
+        catch (Exception e)
+        {
+          status = FAIL;
+          System.err.print("*** Early Page Replacement " + new PageId(pagenumber) + "\n");
+            e.printStackTrace();
+        }
+        }
+      if (status == OK)
+      {
+        try
+        {
+          for (int i=0;i<replacer.getFrames().length;i++)
+          {
+            pagenumber=frames[i];
+           if(replacer.HIST(pagenumber,1)>System.currentTimeMillis())
+            {
+              status=FAIL;
+            }
+          }
+        }
+        catch(Exception e)
+        {
+          status = FAIL;
+          System.err.print ("Incorrect time reference\n");
+        }
+      }
+      else
+      {
+        status = OK;
+      }
+    }
+  pid = new PageId();
+  lastPid = new PageId();
+    for ( pid.pid = firstPid.pid; pid.pid < lastPid.pid;
+    pid.pid = pid.pid + 1 ) {
+      try {
+  SystemDefs.JavabaseBM.freePage( pid );
+      }
+      catch (Exception e) {
+  status = FAIL;
+  System.err.print ("*** Error freeing page " + pid.pid + "\n");
+  e.printStackTrace();
+      }
+    }
+    if ( status == OK )
+      System.out.print ("  Test 4 completed successfully.\n");
+    return status;
+  }
 
-  protected boolean test4 () {
-
-
-
-	    System.out.print("\n  Test 4 \n");
-
-	    int numPages = SystemDefs.JavabaseBM.getNumUnpinnedBuffers() + 1;
-	    Page pg = new Page ();
-	    PageId pid, lastPid;
-	    PageId firstPid = new PageId();
-	    boolean status = OK;
-	    SystemDefs sysdef = new SystemDefs( dbpath, NUMBUF+20, NUMBUF, "LRUK");
-	    LRUK replacer=(LRUK)(SystemDefs.JavabaseBM.getReplacer());
-	    int frames[]=replacer.getFrames();
-
-	    if ( status == OK )
-	    {
-	        System.out.print ("- Read the pages\n");
-		int pagenumber=-1;
-
-	        for ( int index=1; status == OK && index < numPages; index++ ) {
-	        try
-	        {
-	        	pagenumber=frames[index-1];
-	        	if(replacer.last(pagenumber)>0)
-	        	{
-	        		SystemDefs.JavabaseBM.unpinPage( new PageId(pagenumber), true );
-	        	}
-	        }
-	        catch (Exception e)
-	        {
-	        	status = FAIL;
-	        	System.err.print("*** Early Page Replacement " + new PageId(pagenumber) + "\n");
-	            e.printStackTrace();
-	        }
-	        }
-
-	      if (status == OK)
-	      {
-	    	  try
-	    	  {
-	    		  for (int i=0;i<replacer.getFrames().length;i++)
-	    		  {
-	    			  pagenumber=frames[i];
-	    			 if(replacer.HIST(pagenumber,1)>System.currentTimeMillis())
-	    			  {
-	    				  status=FAIL;
-	    			  }
-
-	    		  }
-
-	    	  }
-	    	  catch(Exception e)
-	    	  {
-	    		  status = FAIL;
-	    		  System.err.print ("Incorrect time reference\n");
-	    	  }
-	      }
-	      else
-	      {
-	    	  status = OK;
-	      }
-	    }
-
-    pid = new PageId();
-    lastPid = new PageId();
-
-	    for ( pid.pid = firstPid.pid; pid.pid < lastPid.pid;
-		  pid.pid = pid.pid + 1 ) {
-	      try {
-		SystemDefs.JavabaseBM.freePage( pid );
-	      }
-	      catch (Exception e) {
-		status = FAIL;
-		System.err.print ("*** Error freeing page " + pid.pid + "\n");
-		e.printStackTrace();
-	      }
-	    }
-
-	    if ( status == OK )
-	      System.out.print ("  Test 4 completed successfully.\n");
-
-	    return status;
-	  }
+  
   /**
    * overrides the test5 function in TestDriver
    *
