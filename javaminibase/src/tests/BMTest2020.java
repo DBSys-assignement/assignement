@@ -694,7 +694,7 @@ protected boolean test4 () {
         try
         {
           pagenumber=frames[index-1];
-          if(replacer.last(pagenumber)>0)
+          if(replacer.last(pagenumber)>=0)
           {
             SystemDefs.JavabaseBM.unpinPage( new PageId(pagenumber), true );
           }
